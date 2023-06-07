@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+        <title>ログインページ</title>
+        <meta http-equiv="content-style-type" content="text/css" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="keywords" content="" />
+        <meta name="description" content="" />
+        <meta name="theme-color" content="#FFAA00">
+        <!--
+        <link rel="SHORTCUT ICON" href="./favicon.png" />
+        <link rel="stylesheet" type="text/css" href="../css/common.css" />
+        -->
+        <link rel="stylesheet" type="text/css" href="../css/login.css" />
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="../css/bootstrap.min.css">
+        
+        <!-- Bootstrap Javascript(jQuery含む) -->
+        <script src="../js/popper.min.js"></script>
+        <script src="../js/bootstrap.min.js"></script>
+
+        <script>
+          $(function(){
+            $("#imgFile").on("change", handleFileSelect);
+          });
+          
+          function handleFileSelect(evt) {
+            var files = evt.target.files; // FileList object
+
+            // Loop through the FileList and render image files as thumbnails.
+            for (var i = 0, f; f = files[i]; i++) {
+              var num = i + 5 + 1;
+
+              // Only process image files.
+              if (!f.type.match('image.*')) {
+              　return;
+              }
+
+              var reader = new FileReader();
+
+              // Closure to capture the file information.
+              reader.onload = (function(theFile) {
+                return function(e) {
+                  //var aa = '<div id="icon-file'+ num + '" class="img-icon-box"><img src="'+ e.target.result +'" alt="" class="preview-img" />';
+                  //$("#avatar").css("background-image", "url("+e.target.result+")");
+                  $("#avatar img").attr("src", e.target.result)
+                };
+              })(f);
+
+              // Read in the image file as a data URL.
+              reader.readAsDataURL(f);
+            }
+          }
+        </script>
+        
+    </head>
+    <body>
+        <div class="container">
+          <div class="login-container">
+            <div id="output"></div>
+            <div id="avatar" class="avatar"><img></img></div>
+            <label>
+                <span class="btn btn-primary">
+                    Choose img file
+                    <input id="imgFile" type="file" name="imgFile" style="display:none;">
+                </span>
+            </label>
+
+            <div class="form-box">
+                <form action="/login" method="post">
+                    <% var errorMsg;%>
+                    <% if(errorMsg != ''){ %>
+                      <font color="red"><%= errorMsg %></font>
+                    <% } %>
+                    <input type="text" name="id" value="" placeholder="id" />
+                    <input type="password" name="pwd" value="" placeholder="pwd" />
+                    <button class="btn btn-info btn-block login" type="submit">Login</button>
+                </form>
+            </div>
+          </div>
+        </div>
+    </body>
+  </head>
+</html>

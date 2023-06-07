@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+        <title>テスト</title>
+        <meta http-equiv="content-style-type" content="text/css" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="keywords" content="" />
+        <meta name="description" content="" />
+        <meta name="theme-color" content="#FFAA00">
+        <link rel="SHORTCUT ICON" href="./favicon.png" />
+        <link rel="stylesheet" type="text/css" href="../css/common.css" />
+        <script>
+            var host = location.origin.replace(/^http/, 'ws');
+            var ws = new WebSocket(host);
+            var msg_limit = 20;
+            var userId = "<%= userId %>";
+
+            // メッセージの受信
+            ws.addEventListener('message', function (e) {
+              var data = JSON.parse(e.data);
+              console.log(data);
+                marker = new google.maps.Marker({ // マーカーの追加
+                    position: data.gpsData, // マーカーを立てる位置を指定
+                    map: map // マーカーを立てる地図を指定
+                });
+                var infoWindow = new google.maps.InfoWindow({ // 吹き出しの追加
+                    content: '<div>' + data.userId + '</div>' // 吹き出しに表示する内容
+                });
+                marker.addListener('click', function() { // マーカーをクリックしたとき
+                    infoWindow.open(map, marker); // 吹き出しの表示
+                });
+                map.setCenter(data.gpsData);
+                
+            });
+
+            // メッセージの送信
+            function soshin(){
+                getGps()    
+            }
+
+            function getGps() {
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) { 
+                        var pos = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude
+                            }; 
+                        sendGps(pos);
+                    }); 
+                }
+            }
+            function sendGps(pos){
+                var userId = "<%= userId %>";
+                var userName = "<%= userName %>";
+
+                ws.send(JSON.stringify({userId: userId, userName: userName, gpsData: pos}),function(){}); // 送信
+            }
+
+            setInterval(function(){ws.send('', function(){});}, 10000);
+            
+        </script>
+
+    </head>
+    <style>
+        #map {
+            position: relative;
+            padding-top: 75%;
+            height: 0;
+            overflow: hidden;
+        }
+        #map > div{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <body>            
+        <div id="map"></div>
+        <script>
+                // Note: This example requires that you consent to location sharing when
+                // prompted by your browser. If you see the error "The Geolocation service
+                // failed.", it means you probably did not give permission for the browser to
+                // locate you.
+                var map, infoWindow;
+                function initMap() {
+                  map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: -34.397, lng: 150.644},
+                    zoom: 20
+                  });
+                }
+                
+        </script>
+        <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAs-rCAoyH77NbVkvAm5-1vMuFbmrlQb0&callback=initMap">
+        </script>
+
+            <button onclick="soshin()">GPSを送信</button>
+    </body>
+  </head>
+</html>

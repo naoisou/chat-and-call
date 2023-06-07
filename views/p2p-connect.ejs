@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+ <head>
+  <title><%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=10.0, user-scalable=yes">
+  <meta name="apple-mobile-web-app-capable" content="no">
+ </head>
+ <script src="/jquery/jquery.js"></script>
+ <script src="js/skyway/skyway.min.js"></script>
+ <script src="js/connect.js"></script>
+ <!-- <link rel="stylesheet" href="css/common-style.css" /> -->
+ <!-- <link rel="stylesheet" href="css/icon/fontawesome.css" /> -->
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="../css/bootstrap.min.css">
+
+  <!-- Bootstrap Javascript(jQuery含む) -->
+  <script src="../js/popper.min.js"></script>
+  <script src="../js/bootstrap.min.js"></script>
+  <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"> -->
+  <style>
+    video {
+      width: 100%;
+    }
+    #connection-users {
+      display: grid;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+    grid-gap: 10px;
+    padding: 10px;
+    overflow: hidden;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    max-height: 70vh;
+    overflow: auto;
+}
+@media (max-width: 767px)  {
+  #connection-users {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+}
+  
+}
+  </style>
+<script>
+
+const isIOS = /[ \(]iP/.test(navigator.userAgent)
+
+$(function(){
+
+  //  navigator.mediaDevices.enumerateDevices()
+  //  .then(function(devices) { // 成功時
+  //    console.log(devices);
+  //    $('#device-list > option').remove();
+  //    devices.forEach(function(device) {
+  //      $('#device-list').append($('<option>').html(device.label).val(device.deviceId));
+  //   });
+  //  })
+  //  .catch(function(err) { // エラー発生時
+  //    alert('enumerateDevide ERROR:' +  err);
+  //    $('#device-list').append($('<option>').html('No-device').val(''));
+  //  });
+
+  // カメラプルダウンの作成
+  $('#device-list > option').remove();
+  if(isIOS){
+    $('#device-list').append($('<option>').html("フロントカメラ").val("user"));
+      $('#device-list').append($('<option>').html("バックカメラ").val("environment"));
+  }else{
+    getVideoSources(function(camSouce){
+      $('#device-list').append($('<option>').html(camSouce.name).val(camSouce.id));
+    })
+  }
+   initialize();
+
+   $('#device-list').on('change', function(){
+     // カメラ切替
+     let id = this.value;
+     changeCamera(id, isIOS);
+   });
+
+ });
+</script>
+ <body>
+
+   <div id="connection-users" class="container">
+    
+      <video id="my-video" class=""></video>
+  
+   </div>
+
+  <div class="container">
+   <div id="user" class="controll-area">
+    
+    
+      <div class="row">
+        <span class="item-title table-td col-12">カメラ選択</span>
+        <select id="device-list" class="form-control col-12">
+          <option value="1">選択肢１</option>
+          <option value="2">選択肢２</option>
+          <option value="3">選択肢３</option>
+          <option value="4">選択肢４</option>
+        </select>
+
+        <div class="custom-control custom-switch m-2">
+          <input type="checkbox" onchange="videoToggle(event);" name="videoToggle" class="custom-control-input" id="videoToggle">
+          <label class="custom-control-label" for="videoToggle">カメラ</label>
+        </div>
+        <div class="custom-control custom-switch m-2">
+          <input type="checkbox" onchange="mikeToggle(event);" name="mikeToggle" class="custom-control-input" id="mikeToggle">
+          <label class="custom-control-label" for="mikeToggle">マイク</label>
+        </div>
+        <button onclick="initialize();" type="button" class="btn btn-light">再接続</button>
+      </div>
+      <!-- <div class="row">
+        <div class="buttons">
+          <a href="javascript:void(0)" onchange="videoToggle();"><i class="fa fa-video"></i></a>
+          <a href="javascript:void(0)" onclick="mikeToggle();"><i class="fas fa-microphone-alt"></i></a>
+
+        </div>
+      </div> -->
+      <!-- 
+        <form class="input-area">
+        <span class="item-title">メッセージエリア(将来拡張予定)</span>
+        <input type="text"></input>
+      </form>
+      -->
+
+    
+
+    </div>
+  </div>
+   </div>
+
+
+
+ </body>
+</html>

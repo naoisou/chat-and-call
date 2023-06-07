@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+        <title>テスト</title>
+        <meta http-equiv="content-style-type" content="text/css" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="keywords" content="" />
+        <meta name="description" content="" />
+        <meta name="theme-color" content="#FFAA00">
+        <link rel="SHORTCUT ICON" href="./favicon.png" />
+        <link rel="stylesheet" href="css/common.css" />
+        <script src="jquery/jquery.js"></script>
+        <script src="js/reconnecting-websocket.js"></script>
+        <script>
+            var host = location.origin.replace(/^http/, 'ws') + "?roomId=<%= roomId %>"
+            
+            var ws = new ReconnectingWebSocket(host);
+            ws.reconnectInterval = 60000;
+            var msg_limit = 20;
+            var userId = "<%= userId %>";
+
+            // メッセージの受信
+            ws.addEventListener('message', function (e) {
+              var data = JSON.parse(e.data);
+              console.log(data);
+              setMessage(data);
+
+            });
+
+            // メッセージの送信
+            function soshin(){
+                var message = document.getElementById('message');
+                var roomId = "<%= roomId %>";
+                var userId = "<%= userId %>";
+                var userName = "<%= userName %>";
+                ws.send(JSON.stringify({userId: userId, roomId: roomId, userName: userName, message: message.value}),function(){}); // 送信
+                message.value = '';
+            }
+
+            function setMessage(data){
+              if(userId == data.userId){
+                messages = $("#messages").prepend('  <div class="chat-box">' +
+                                                        '<div class="chat-face"><img src="img/images.jpg" alt="自分" width="90" height="90"></div>' +
+                                                        '<div class="chat-hukidashi">' + data.message + '</div>' +
+                                                        '</div>' +
+                                                        '<div align="left" class="chat-date">' + data.date + '</div>' +
+                                                        '<div align="left" class="chat-date">　' + data.userName||data.userId + ' さん</div>' +
+                                                        '<div class="clear_line1"></div>' +
+                                                      '</div>');
+              }else{
+                // Androidで振動通知
+                var isVibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+                if(isVibrate){
+                  navigator.vibrate([100,50,100]);
+                }
+
+                messages = $("#messages").prepend('  <div class="chat-box">' +
+                                                        '<div class="chat-face"><img src="img/someone.jpg" alt="相手" width="90" height="90"></div>' +
+                                                        '<div class="chat-hukidashi someone">' + data.message + '</div>' +
+                                                        '</div>' +
+                                                        '<div align="left" class="chat-date">' + data.date + '</div>' +
+                                                        '<div align="left" class="chat-date">　' + data.userName||data.userId + ' さん</div>' +
+                                                        '<div class="clear_line1"></div>' +
+                                                      '</div>');
+              }
+            }
+
+            // １０秒ごとに空の文字列を送信（こうしないとなぜか切断されてしまう）
+            setInterval(function(){ws.send('', function(){});}, 10000);
+          
+
+          $(function(){
+            $.get('/chat/init?roomId=<%= roomId %>',function(data){
+                console.log(data);
+                data.forEach(function(val, key){
+                  console.log(val);
+                  setMessage(val);
+
+                });
+            });
+          });
+        </script>
+
+    </head>
+    <body>
+        <h1>チャットテスト</h1>
+        <div align="right"><a href="/logout"><input type="button" name="button" value="ログアウト" class="btn d_glay"></a></div>
+        <div class="clear_line1"></div>
+
+        <div class="frame_inner">
+          <div class="frame">
+            <div id="messages"/>
+            <div class="clear_line1"></div>
+            <div align="right">
+              <form action="chat/delete" method="post">
+                <input type="hidden" name="roomId" value="<%= roomId %>"/>
+                <input type="submit" name="submit" value="ログ削除" class="btn d_glay"/>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="clear_line1"></div>
+        
+
+        <div class="send-box">
+          <input type="text" value="" id="message" />
+          <input type="button" value="送信" onclick="soshin();" class="btn"/>
+          <input type="button" value="更新" onclick="javascript:location.reload();" class="btn"/>
+        </div>
+    </body>
+</html>

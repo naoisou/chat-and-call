@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+ <head>
+  <title>Self Camera</title>
+ </head>
+ <script src="/jquery/jquery.js"></script>
+ <script src="js/skyway/skyway.min.js"></script>
+ <script src="js/connect.js"></script>
+ <link rel="stylesheet" href="css/common-style.css" />
+ <script>
+ $(function(){
+ $('#device-list > option').remove();
+  getVideoSources(function(cam) {
+    console.log("cam", cam);
+    $('#device-list').append($('<option>').html(cam.name).val(cam.id));
+    console.log('add button');
+  });
+});
+</script>
+ <body>
+   <select id="device-list">
+    <option value="1">選択肢１</option>
+    <option value="2">選択肢２</option>
+    <option value="3">選択肢３</option>
+    <option value="4">選択肢４</option>
+  </select>
+   <input type="button" onclick="initialize();" value="始める"/>
+   <div class="video-area">
+     <video id="myVideo" width="400" height="300" autoplay="1" ></video>
+   </div>
+   <div class="video-area">
+     <video id="remoteVideos" width="400" height="300" autoplay="1" ></video>
+   </div>
+
+   <div class="chat-area">
+     <span>あああ</span>
+   </div>
+
+
+
+
+
+ </body>
+</html>

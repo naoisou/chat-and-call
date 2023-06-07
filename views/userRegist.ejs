@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+        <title>ユーザ登録</title>
+        <meta http-equiv="content-style-type" content="text/css" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="keywords" content="" />
+        <meta name="description" content="" />
+        <meta name="theme-color" content="#FFAA00">
+        <link rel="SHORTCUT ICON" href="./favicon.png" />
+        <link rel="stylesheet" type="text/css" href="../css/common.css" />
+        <script type="text/javascript" src="js/jquery-3.2.0.min.js"></script>
+        <script>
+        <!--
+
+          -->
+        </script>
+
+    </head>
+    <body>
+      <div class="frame_inner">
+        <h1>ユーザ登録画面</h1>
+
+        <div align="center">
+          <% var errorMsg;%>
+            <% if(errorMsg != ''){ %>
+              <font color="red"><%= errorMsg %></font>
+            <% } %>
+          <form action="/userRegist" method="post">
+
+              <table>
+                <tr>
+                  <th>ID</th>
+                  <td><input type="text" name="id" value="" /></td>
+                </tr>
+                <tr>
+                  <th>パスワード</th>
+
+                  <td><input type="text" name="pwd" value="" /></td>
+                </tr>
+                <tr>
+                  <th>名前</th>
+
+                  <td><input type="text" name="userName" value="" /></td>
+                </tr>
+              </table>
+              <div class="clear_line1"></div>
+
+              <input type="submit" value="登録" class="login_btn" />
+
+          </form>
+
+
+          <form action="/userRegist/delete" method="post">
+            <table>
+              <tr>
+                <th>ID</th>
+                <td><input type="text" name="userId" value="" /></td>
+              </tr>
+            </table>
+            <input type="submit" value="削除" class="login_btn" />
+          </form>
+        </div>
+      </div>
+    </body>
+  </head>
+</html>

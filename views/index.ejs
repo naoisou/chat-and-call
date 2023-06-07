@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+ <head>
+  <title>Self Camera</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=10.0, user-scalable=yes">
+  <meta name="apple-mobile-web-app-capable" content="no">
+ </head>
+ <script src="/jquery/jquery.js"></script>
+ <script src="js/skyway/skyway.min.js"></script>
+ <script src="js/connect.js"></script>
+ <link rel="stylesheet" href="css/common-style.css" />
+ <!-- <link rel="stylesheet" href="css/icon/fontawesome.css" /> -->
+ <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+ <script>
+
+$(function(){
+
+   navigator.mediaDevices.enumerateDevices()
+   .then(function(devices) { // 成功時
+     console.log(devices);
+     $('#device-list > option').remove();
+     devices.forEach(function(device) {
+       $('#device-list').append($('<option>').html(device.label).val(device.deviceId));
+    });
+   })
+   .catch(function(err) { // エラー発生時
+     alert('enumerateDevide ERROR:' +  err);
+     $('#device-list').append($('<option>').html('No-device').val(''));
+   });
+
+
+   $('#device-list').on('change', function(){
+     // 　 カメラ切替
+
+   });
+
+ });
+</script>
+ <body>
+
+   <div id="connection-users" class="video-area connection-users">
+
+   </div>
+
+   <div id="user" class="video-area my-area">
+    <div class="my-video-area">
+        <div class="my-video-div"><video id="my-video"></video></div>
+        <span class="item-title table-td">カメラ選択</span>
+        <select id="device-list" class="table-td">
+          <option value="1">選択肢１</option>
+          <option value="2">選択肢２</option>
+          <option value="3">選択肢３</option>
+          <option value="4">選択肢４</option>
+        </select>
+        <div class="buttons">
+          <a href="javascript:void(0)" onclick="videoToggle();"><i class="fa fa-video"></i></a>
+          <a href="javascript:void(0)" onclick="mikeToggle();"><i class="fas fa-microphone-alt"></i></a>
+
+        </div>
+
+    </div>
+    <div class="chat-area">
+      <form class="input-area">
+        <span class="item-title">メッセージエリア(将来拡張予定)</span>
+        <input type="text"></input>
+      </form>
+    </div>
+
+    </div>
+   </div>
+
+
+
+ </body>
+</html>

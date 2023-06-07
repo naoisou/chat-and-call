@@ -1,0 +1,85 @@
+body {
+  padding: 10px;
+  font-size: 15px;
+  font-family: "Hiragino Kaku Gothic ProN","メイリオ", sans-serif;
+  background-color: #f6f6f6;
+  -webkit-text-size-adjust: 100%;
+}
+
+a {
+  color: #00B7FF;
+}
+
+video{
+  /* border: 1px dashed; */
+}
+
+i{
+  color: orange;
+  font-size: 2rem;
+  font-family: FontAwesome;
+  font-style: nomal;
+  padding-right: 20px;
+}
+
+.video-area{
+  /* border: 1px solid #000; */
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px 2px #00000024;
+  min-width: 320px;
+  width: 100%;
+  display: flex;
+}
+
+#user{
+  background-color: #ffffff;
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  z-index: 1;
+  width: calc(100% - 20px);
+  height: 30vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+#connection-users{
+    max-height: 52vh;
+    background-attachment: fixed;
+    background-position: center center;
+    background-size: cover;
+    justify-content: space-around;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    overflow: auto;
+
+}
+
+#connection-users video{
+    width: 40%;
+    min-width: 140px;
+    margin: 10px;
+}
+
+.my-video-area,
+.chat-area{
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px 2px #00000024;
+  width: 45%;
+  min-width: 150px;
+  margin: 10px 0px;
+}
+
+.my-video-div video{
+  max-height: 15vh;
+  max-width: 100%;
+}
+
+.input-area{
+  width: 45%;
+}
+.chat-area input{
+  width: 80%;
+}
