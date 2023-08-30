@@ -95,6 +95,10 @@ function initializeMedia(callback) {
       callback();
     },
     function(err) {
+      if(err.message == 'Permission denied'){
+        alert("このページではカメラとマイクがブロックされている可能性があります。設定を確認し、再接続ボタンを押下してください")
+        
+      }
       console.error(err);
     }
   );

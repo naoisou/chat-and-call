@@ -17,11 +17,11 @@ router.post('/', function(req, res){
 
   User.find({userId: user.userId},{},{},function(error, users){
     if(users != null && users.length > 0){
-      res.render('userRegist', {errorMsg:'登録済みのユーザIDです。'});
+      res.render('userRegist', {errorMsg:'登録済みのユーザIDです'});
     }else{
       user.save(function(err) {
         if (err) { res.render('error', {message:'エラーが発生しました。'}); }
-        res.render('userRegist', {errorMsg: '登録が完了しました。'});
+        res.render('userRegist', {errorMsg: '登録が完了しました'});
       });
     }
   });

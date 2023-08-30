@@ -19,7 +19,10 @@
   <script src="../js/bootstrap.min.js"></script>
   <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"> -->
   <style>
-    video {
+    .container video {
+      height: 100%;
+      display: block;
+      object-fit: contain;
       width: 100%;
     }
     #connection-users {
@@ -28,10 +31,9 @@
     margin-bottom: 20px;
     grid-gap: 10px;
     padding: 10px;
-    overflow: hidden;
+    overflow: auto;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     max-height: 70vh;
-    overflow: auto;
 }
 @media (max-width: 767px)  {
   #connection-users {
@@ -60,12 +62,14 @@ $(function(){
   //  });
 
   // カメラプルダウンの作成
-  $('#device-list > option').remove();
+  // $('#device-list > option').remove();
   if(isIOS){
+    let opt = document.createElement("option");
     $('#device-list').append($('<option>').html("フロントカメラ").val("user"));
       $('#device-list').append($('<option>').html("バックカメラ").val("environment"));
   }else{
     getVideoSources(function(camSouce){
+      console.log(camSouce)
       $('#device-list').append($('<option>').html(camSouce.name).val(camSouce.id));
     })
   }
@@ -83,7 +87,7 @@ $(function(){
 
    <div id="connection-users" class="container">
     
-      <video id="my-video" class=""></video>
+      <video id="my-video" class="no-image"></video>
   
    </div>
 
@@ -94,10 +98,10 @@ $(function(){
       <div class="row">
         <span class="item-title table-td col-12">カメラ選択</span>
         <select id="device-list" class="form-control col-12">
-          <option value="1">選択肢１</option>
+          <!-- <option value="1">選択肢１</option>
           <option value="2">選択肢２</option>
           <option value="3">選択肢３</option>
-          <option value="4">選択肢４</option>
+          <option value="4">選択肢４</option> -->
         </select>
 
         <div class="custom-control custom-switch m-2">
