@@ -13,6 +13,68 @@
         <script src="jquery/jquery.js"></script>
         <script src="js/reconnecting-websocket.js"></script>
         <script>
+          const publicVapidKey = '<%= vapidPrivateKey %>';
+
+          async function subscribe() {
+              await navigator.serviceWorker.register('sw.js', {
+                scope: '/'
+              });
+              navigator.serviceWorker.ready
+                .then((registration) => {
+                  return registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
+                  });
+                }).then(async (subscription) => {
+                fetch('/chat/api/subscribe', {
+                  method: 'POST',
+                  body: JSON.stringify({subscription}),
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                }).then(async (response) => {
+                  console.log(await response.json())
+                })
+              })
+            }
+
+            function urlBase64ToUint8Array(base64String) {
+              const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+              const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+              const rawData = atob(base64);
+              const outputArray = new Uint8Array(rawData.length);
+
+              for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+              }
+              return outputArray;
+            }
+
+            function onSubscribe() {
+              console.log('@onSubscribe')
+              if(!window.Notification){
+                alert('Push通知が対応していません')
+                return
+              }
+              Notification.requestPermission().then((permission) => {
+                if (permission === 'granted') {
+                  subscribe()
+                } else {
+                  alert('Push通知が許可されていません。')
+                }
+              })
+            }
+
+            function onNotification(data) {
+              fetch('/chat/api/notification', {
+                method: 'POST',
+                data
+              }).then(() => {
+                console.log("push send.")
+              })
+            }
+
+
             var host = location.origin.replace(/^http/, 'ws') + "?roomId=<%= roomId %>"
             
             var ws = new ReconnectingWebSocket(host);
@@ -34,7 +96,9 @@
                 var roomId = "<%= roomId %>";
                 var userId = "<%= userId %>";
                 var userName = "<%= userName %>";
-                ws.send(JSON.stringify({userId: userId, roomId: roomId, userName: userName, message: message.value}),function(){}); // 送信
+                var json = {userId: userId, roomId: roomId, userName: userName, message: message.value};
+                ws.send(JSON.stringify(json),function(){}); // 送信
+                onNotification(json);// 通知
                 message.value = '';
             }
 
@@ -85,6 +149,10 @@
     </head>
     <body>
         <h1>チャットテスト</h1>
+        <div>
+          <button onclick="onSubscribe()">通知を登録</button>
+      </div>
+      
         <div align="right"><a href="/logout"><input type="button" name="button" value="ログアウト" class="btn d_glay"></a></div>
         <div class="clear_line1"></div>
 

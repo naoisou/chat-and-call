@@ -1,0 +1,72 @@
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="/manifest.json">
+  <script src="js/service_worker.js"></script>
+  <script>
+    window.addEventListener('load', async () => {
+        const registration = await navigator.serviceWorker.register('/service_worker.js', { scope: '/' })
+        console.log('サービスワーカー登録結果', registration)
+    })
+
+    async function requestNotificationPermission () {
+        switch (Notification.permission) {
+            case 'default':
+            console.log('Push通知が未設定（デフォルト状態）')
+            // Push通知権限をリクエストする
+            const permission = await Notification.requestPermission()
+            return (permission === 'granted')
+            case 'denied':
+            console.log('Push通知が拒否されている')
+            return false
+            case 'granted':
+            console.log('Push通知が許可されている')
+            return true
+        }
+    }
+
+    async function subscribePushNotification () {
+        if (!await requestNotificationPermission()) {
+            return
+        }
+
+        const vapidPublicKey = 'YOUR_VAPID_PUBLIC_KEY'
+
+        const registration = await navigator.serviceWorker.getRegistration()
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: vapidPublicKey
+        })
+
+        const p256dh = subscription.getKey('p256dh')
+        const auth = subscription.getKey('auth')
+
+        document.getElementById('endpoint').value = subscription.endpoint
+        document.getElementById('p256dh').value = btoa(String.fromCharCode.apply(null, new Uint8Array(p256dh)))
+        document.getElementById('auth').value = btoa(String.fromCharCode.apply(null, new Uint8Array(auth)))
+    }
+
+    async function unsubscribePushNotification () {
+        const registration = await navigator.serviceWorker.getRegistration()
+        const subscription = await registration.pushManager.getSubscription()
+
+        if (subscription) {
+            const result = await subscription.unsubscribe()
+            console.log(result)
+        }
+    }
+  </script>
+</head>
+
+<body>
+  <ul>
+    <li><button onclick="subscribePushNotification()">Push通知を許可する</a></li>
+    <li><button onclick="unsubscribePushNotification()">Push通知を拒否する</a></li>
+
+    <li>endpoint<input type="text" id="endpoint" readonly></li>
+    <li>p256dh<input type="text" id="p256dh" readonly></li>
+    <li>auth<input type="text" id="auth" readonly></li>
+  </ul>
+</body>
+</html>
